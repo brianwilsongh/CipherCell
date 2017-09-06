@@ -1,0 +1,13 @@
+#canvasA {
+  border: 1px solid blue;
+}
+
+p {
+  color: red;
+}
+
+#arrow {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+}
