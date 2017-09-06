@@ -54,18 +54,36 @@ var playerObject = {
 
 };
 
-var arcs = {
-  0: [0, Math.PI / 2]
+var itemsOfOrbit = {
+  //does not include the player object
+  0: [],
+  1: [],
+  2: [],
+  3: [],
+  4: []
 };
 
+var buildKillers = function (number){
+  //build killers number times
+  for (var itr = 0; itr < number; itr++){
+    itemsOfOrbit[parseInt(Math.random() * 5) + 1].push(
+      //six killers per orbit max, each with arc of pi/6 radians
+      {killer: itr, startArc: parseInt(Math.random() * 6) + 1}
+    );
+  }
+};
+buildKillers(5);
 
 addEventListener("keydown", function (e) {
   console.log(e);
 }, false);
 
 var update = function() {
-  arcs[0][0] += 0.01;
-  arcs[0][1] += 0.01;
+  Object.keys(itemsOfOrbit).forEach((key) => {
+    itemsOfOrbit[key].forEach((killer) => {
+      killer.startArc += 0.01;
+    });
+  });
 };
 
 var render = function() {
@@ -87,12 +105,19 @@ var render = function() {
     (center[1] + playerObject.y(playerObject.radian, playerObject.orbit) - 15),
      30 , 30);
 
-  ctx.lineWidth = 5;
+  ctx.lineWidth = 15;
   ctx.strokeStyle = "#FF0000";
-  ctx.beginPath();
-  ctx.arc(center[0], center[1], innerCircleWidth + orbits[3], arcs[0][0], arcs[0][1]);
-  ctx.stroke();
-  ctx.closePath();
+  ctx.lineCap = "square";
+  //draw the objects in each orbit
+  Object.keys(itemsOfOrbit).forEach((orbitKey) => {
+    itemsOfOrbit[orbitKey].forEach((killer) => {
+      ctx.beginPath();
+      ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], killer.startArc, killer.startArc + Math.PI/6);
+      ctx.stroke();
+      ctx.closePath();
+    });
+  });
+
 };
 
 var mainLoop = function () {
