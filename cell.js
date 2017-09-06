@@ -10,10 +10,6 @@ var center = [canvas.width/2, canvas.height/2];
 var innerCircleWidth = canvas.width / 20;
 var orbits = [0, 60, 120, 180, 240];
 
-var playerImageReady = false;
-playerImage.onload = function(){
-  playerImageReady = true;
-};
 
 addEventListener("keydown", function (e) {
   e.stopPropagation();
@@ -31,30 +27,35 @@ addEventListener("keydown", function (e) {
   }
   if (e.keyCode === 37 || e.keyCode === 65) {
     //left
-    playerObject.degree += (.4 - (playerObject.orbit * .05));
+    playerObject.radian += (.3 - (playerObject.orbit * .04));
   }
   if (e.keyCode === 39 || e.keyCode === 68) {
     //right
-    playerObject.degree -= (.4 - (playerObject.orbit * .05));
+    playerObject.radian -= (.3 - (playerObject.orbit * .04));
   }
 }, false);
 
 
 var playerObject = {
   orbit: 4,
-  degree: 0,
-  x: function (degree, playerOrbit) {
-    //radius times the cosine of the degree
+  radian: 1,
+  //CLOCKWISE starting from 0
+  x: function (radian, playerOrbit) {
+    //radius times the cosine of the radian
     return (
-      (innerCircleWidth + orbits[playerOrbit]) * Math.cos(degree)
+      (innerCircleWidth + orbits[playerOrbit]) * Math.cos(radian)
     );
   },
-  y: function (degree, playerOrbit) {
+  y: function (radian, playerOrbit) {
     return (
-      (innerCircleWidth + orbits[playerOrbit]) * Math.sin(degree)
+      (innerCircleWidth + orbits[playerOrbit]) * Math.sin(radian)
     );
   },
 
+};
+
+var arcs = {
+  0: [0, Math.PI / 2]
 };
 
 
@@ -63,13 +64,14 @@ addEventListener("keydown", function (e) {
 }, false);
 
 var update = function() {
-
+  arcs[0][0] += 0.01;
+  arcs[0][1] += 0.01;
 };
 
 var render = function() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = "white";
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "black";
   ctx.beginPath();
   //orbit paths
   ctx.arc(center[0], center[1], innerCircleWidth + orbits[0], 0, 2 * Math.PI);
@@ -78,13 +80,19 @@ var render = function() {
   ctx.arc(center[0], center[1], innerCircleWidth + orbits[3], 0, 2 * Math.PI);
   ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
   ctx.stroke();
+  ctx.closePath();
 
-  if (playerImageReady){
-    ctx.drawImage(playerImage,
-      (center[0] + playerObject.x(playerObject.degree, playerObject.orbit) - 15),
-      (center[1] + playerObject.y(playerObject.degree, playerObject.orbit) - 15),
-       30 , 30);
-  }
+  ctx.drawImage(playerImage,
+    (center[0] + playerObject.x(playerObject.radian, playerObject.orbit) - 15),
+    (center[1] + playerObject.y(playerObject.radian, playerObject.orbit) - 15),
+     30 , 30);
+
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = "#FF0000";
+  ctx.beginPath();
+  ctx.arc(center[0], center[1], innerCircleWidth + orbits[3], arcs[0][0], arcs[0][1]);
+  ctx.stroke();
+  ctx.closePath();
 };
 
 var mainLoop = function () {
