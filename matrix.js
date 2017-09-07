@@ -53,7 +53,7 @@ var enterMatrix = function (){
         ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
         ctx.fillRect(0, 0, c.width, c.height);
 
-        ctx.fillStyle = "#0F0"; //green text
+        ctx.fillStyle = "#e51300"; //green text
         ctx.font = font_size + "px arial";
         //looping over drops
         for(var i = 0; i < drops.length; i++)
@@ -65,7 +65,11 @@ var enterMatrix = function (){
               //if it's below the mouse's y position
               ctx.fillStyle = "#e51300";
             } else {
-              ctx.fillStyle = "#0F0";
+              if (window.playerDamaged){
+                ctx.fillStyle = "#e51300";
+              } else {
+                ctx.fillStyle = "#05ad1b";
+              }
             }
 
 

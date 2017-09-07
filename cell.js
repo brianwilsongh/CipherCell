@@ -168,12 +168,12 @@ window.onload = function (){
           //if killer is at the overlap
           if (playerHorizRad <= killerHorizRad
             || playerHorizRad >= Math.PI*2 - (Math.PI/6 - killerHorizRad) ){
-              playerKilled();
+              playerHit();
               return true;
           }
         } else if (playerHorizRad <= killerHorizRad
           && playerHorizRad >= killerHorizRad - Math.PI/6){
-            playerKilled();
+            playerHit();
             return true;
         }
       });
@@ -181,11 +181,13 @@ window.onload = function (){
     return false;
   };
 
-  var playerKilled = function () {
+  var playerHit = function () {
     life --;
+    window.playerDamaged = true;
   };
 
   var update = function() {
+    window.playerDamaged = false;
     Object.keys(itemsOfOrbit).forEach((orbit) => {
       itemsOfOrbit[orbit].forEach((item) => {
         if (item.startArc >= 2 * Math.PI){
@@ -205,13 +207,18 @@ window.onload = function (){
 
   var render = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "#05ad1b";
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
     ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fill();
     ctx.closePath();
+
+    ctx.lineWidth = 1;
+    if (window.playerDamaged){
+      ctx.strokeStyle = "#e51300";
+    } else {
+      ctx.strokeStyle = "#05ad1b";
+    }
     ctx.beginPath();
     //orbit paths
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[0], 0, 2 * Math.PI);
