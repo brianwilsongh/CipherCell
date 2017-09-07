@@ -38,7 +38,7 @@ addEventListener("keydown", function (e) {
 
 var playerObject = {
   orbit: 4,
-  radian: 1,
+  radian: Math.PI/2,
   //CLOCKWISE starting from 0
   x: function (radian, playerOrbit) {
     //radius times the cosine of the radian
@@ -66,17 +66,13 @@ var itemsOfOrbit = {
 var buildKillers = function (number){
   //build killers number times
   for (var itr = 0; itr < number; itr++){
-    itemsOfOrbit[parseInt(Math.random() * 5) + 1].push(
+    itemsOfOrbit[parseInt(Math.random() * 4) + 1].push(
       //six killers per orbit max, each with arc of pi/6 radians
       {killer: itr, startArc: parseInt(Math.random() * 6) + 1}
     );
   }
 };
 buildKillers(5);
-
-addEventListener("keydown", function (e) {
-  console.log(e);
-}, false);
 
 var update = function() {
   Object.keys(itemsOfOrbit).forEach((key) => {
@@ -100,10 +96,18 @@ var render = function() {
   ctx.stroke();
   ctx.closePath();
 
-  ctx.drawImage(playerImage,
-    (center[0] + playerObject.x(playerObject.radian, playerObject.orbit) - 15),
-    (center[1] + playerObject.y(playerObject.radian, playerObject.orbit) - 15),
-     30 , 30);
+  var playerPosX = center[0] + playerObject.x(playerObject.radian, playerObject.orbit) - 15;
+  var playerPosY = center[1] + playerObject.y(playerObject.radian, playerObject.orbit) - 15;
+
+  var angle = Math.atan2(playerPosY + 15 - center[1], playerPosX + 15 - center[0]) - Math.PI / 2;
+
+  ctx.save();
+  ctx.translate(playerPosX + 15, playerPosY + 15);
+  console.log(angle);
+  ctx.rotate(Math.PI/6 + angle);
+  ctx.drawImage(playerImage, -15, -15, 30 , 30);
+  ctx.restore();
+
 
   ctx.lineWidth = 15;
   ctx.strokeStyle = "#FF0000";
