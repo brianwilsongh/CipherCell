@@ -64,30 +64,51 @@ var itemsOfOrbit = {
 };
 
 var buildKillers = function (number){
-  //build killers number times
   for (var itr = 0; itr < number; itr++){
     itemsOfOrbit[parseInt(Math.random() * 4) + 1].push(
       //six killers per orbit max, each with arc of pi/6 radians
-      {killer: itr, startArc: parseInt(Math.random() * 6) + 1}
+      {killer: itr, type: "killer", startArc: parseInt(Math.random() * 6) + 1}
     );
   }
 };
 buildKillers(2);
 
-var playerInsideKiller = function (){
+var buildBlockers = function (number){
+  for (var itr = 0; itr < number; itr++){
+    itemsOfOrbit[parseInt(Math.random() * 4) + 1].push(
+      //three blockers per orbit max, each with arc of pi/6 radians
+      {killer: itr, type: "blocker", startArc: parseInt(Math.random() * 3) + 1}
+    );
+  }
+};
+buildBlockers(2);
+
+var checkPlayerInsideKiller = function (){
   if (playerObject.orbit < 5){
     itemsOfOrbit[playerObject.orbit].forEach((killer) => {
       var playerHorizRad = ((Math.PI*2) - ((Math.PI*2 + (playerObject.radian % (Math.PI * 2)))%(Math.PI*2)));
       var killerHorizRad = ((Math.PI*2) - killer.startArc);
       //remember killers are rendered counterclockwise
-      if (playerHorizRad <= killerHorizRad
+
+      if (killerHorizRad <= Math.PI/6){
+        //if killer is at the overlap
+        if (playerHorizRad <= killerHorizRad
+          || playerHorizRad >= Math.PI*2 - (Math.PI/6 - killerHorizRad) ){
+            playerKilled();
+            return true;
+        }
+      } else if (playerHorizRad <= killerHorizRad
         && playerHorizRad >= killerHorizRad - Math.PI/6){
-          console.log("touch");
+          playerKilled();
           return true;
       }
     });
   }
   return false;
+};
+
+var playerKilled = function () {
+  console.log("Zed is dead baby. Zed is dead.");
 };
 
 var update = function() {
@@ -99,7 +120,7 @@ var update = function() {
       killer.startArc += 0.005;
     });
   });
-  if (playerInsideKiller()){
+  if (checkPlayerInsideKiller()){
     console.log("Touching!");
   }
 };
@@ -139,9 +160,9 @@ var render = function() {
   ctx.lineCap = "square";
   //draw the objects in each orbit
   Object.keys(itemsOfOrbit).forEach((orbitKey) => {
-    itemsOfOrbit[orbitKey].forEach((killer) => {
+    itemsOfOrbit[orbitKey].forEach((item) => {
       ctx.beginPath();
-      ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], killer.startArc, killer.startArc + Math.PI/6);
+      ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
       ctx.stroke();
       ctx.closePath();
     });
