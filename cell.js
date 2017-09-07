@@ -8,7 +8,7 @@ canvas.width = 800;
 canvas.height = 650;
 var center = [canvas.width/2, canvas.height/2];
 var innerCircleWidth = canvas.width / 20;
-var orbits = [0, 60, 120, 180, 240];
+var orbits = [0, 50, 100, 150, 200, 250];
 
 
 addEventListener("keydown", function (e) {
@@ -37,7 +37,7 @@ addEventListener("keydown", function (e) {
 
 
 var playerObject = {
-  orbit: 4,
+  orbit: 5,
   radian: Math.PI/2,
   //CLOCKWISE starting from 0
   x: function (radian, playerOrbit) {
@@ -72,14 +72,40 @@ var buildKillers = function (number){
     );
   }
 };
-buildKillers(5);
+buildKillers(2);
+
+var playerInsideKiller = function (){
+  if (playerObject.orbit < 5){
+    itemsOfOrbit[playerObject.orbit].forEach((killer) => {
+      var playerHorizRad = ((Math.PI*2) - ((Math.PI*2 + (playerObject.radian % (Math.PI * 2)))%(Math.PI*2)));
+      var killerHorizRad = ((Math.PI*2) - killer.startArc);
+      //remember killers are rendered counterclockwise
+      if (playerHorizRad <= killerHorizRad
+        && playerHorizRad >= killerHorizRad - Math.PI/6){
+          console.log("touch");
+          return true;
+      }
+    });
+  }
+  return false;
+};
 
 var update = function() {
   Object.keys(itemsOfOrbit).forEach((key) => {
     itemsOfOrbit[key].forEach((killer) => {
-      killer.startArc += 0.01;
+      if (killer.startArc >= 2 * Math.PI){
+        killer.startArc = 0;
+      }
+      killer.startArc += 0.005;
     });
   });
+  if (playerInsideKiller()){
+    console.log("Touching!");
+  }
+};
+
+var positionWithinKillerArc = function(pos, killerStartArc){
+
 };
 
 var render = function() {
@@ -103,7 +129,6 @@ var render = function() {
 
   ctx.save();
   ctx.translate(playerPosX + 15, playerPosY + 15);
-  console.log(angle);
   ctx.rotate(Math.PI/6 + angle);
   ctx.drawImage(playerImage, -15, -15, 30 , 30);
   ctx.restore();
