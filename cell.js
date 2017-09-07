@@ -91,7 +91,6 @@ var itemsOfOrbit = {
 var buildKillers = function (number){
   var killers = 0;
   var startArcsInOrbit = {
-    0: [],
     1: [],
     2: [],
     3: [],
@@ -106,11 +105,13 @@ var buildKillers = function (number){
         //generate random start arc, insert if position not used
         if (startArcsInOrbit[orbit].indexOf(randomStartArc) === -1){
           //if this start arc was not used in this orbit
+          startArcsInOrbit[orbit].push(randomStartArc);
           itemsOfOrbit[orbit].push(
             {type: "killer", startArc: randomStartArc}
           );
+          console.log("push randomStartArc", randomStartArc, "to orbital", orbit);
+          killers += 1;
         }
-        killers += 1;
       }
     }
 
@@ -124,7 +125,7 @@ var buildBlockers = function (number){
   for (var itr = 0; itr < number; itr++){
     itemsOfOrbit[parseInt(Math.random() * 4) + 1].push(
       //three blockers per orbit max, each with arc of pi/6 radians
-      {killer: itr, type: "blocker", startArc: parseInt(Math.random() * 3) + 1}
+      {type: "blocker", startArc: parseInt(Math.random() * 3) + 1}
     );
   }
 };
