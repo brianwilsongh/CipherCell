@@ -1,5 +1,15 @@
 #canvasA {
+  position: absolute;
   border: 1px solid blue;
+  z-index: 10;
+}
+
+#c {
+  opacity: 0.4;
+}
+
+#matrix {
+  background: black;
 }
 
 p {
@@ -10,4 +20,8 @@ p {
   position: absolute;
   width: 30px;
   height: 30px;
+}
+
+.matrix{
+  background: black;
 }
