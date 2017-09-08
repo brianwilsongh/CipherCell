@@ -157,13 +157,18 @@ window.onload = function (){
 
   };
 
-  var itemsOfOrbit = {
-    //does not include the player object
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: []
+  var itemsOfOrbit;
+  var resetOrbits = function (){
+    itemsOfOrbit = {
+      //does not include the player object
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: []
+    };
+    playerObject.orbit = 5;
+    playerObject.radian = Math.PI/2;
   };
 
   var buildKillers = function (number){
@@ -279,8 +284,6 @@ window.onload = function (){
             }
         } else {
           killerHorizRad %= Math.PI*2;
-          console.log("playerHRad: ", playerHorizRad);
-          console.log("killerHRad: ", killerHorizRad);
           if (killerHorizRad <= Math.PI/6){
             //if hunterKiller is at the overlap (hks rendered CCW)
             if (playerHorizRad <= killerHorizRad
@@ -344,27 +347,27 @@ window.onload = function (){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
+    if (window.playerDamaged){
+      ctx.fillStyle = "rgba(40, 0, 0, 0.68)";
+    } else {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
+    }
     ctx.fill();
     ctx.closePath();
 
     ctx.save();
     ctx.lineWidth = 1;
-    if (window.playerDamaged){
-      ctx.strokeStyle = "#e51300"; //evil red
-    } else {
-      if (playerObject.orbit < 1){
-        ctx.strokeStyle = "#05ad1b"; //matrix green
-      } else {
-        ctx.setLineDash([10, 15]);
-        ctx.strokeStyle = "black";
-      }
-    }
 
-    ctx.shadowColor = "white";
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.shadowBlur = 4;
+    if (playerObject.orbit < 1){
+      ctx.strokeStyle = "#05ad1b"; //matrix green
+    } else {
+      ctx.setLineDash([10, 15]);
+      ctx.strokeStyle = "black";
+      ctx.shadowColor = "white";
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowBlur = 4;
+    }
     ctx.beginPath();
     //orbit paths
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[0], 0, 2 * Math.PI);
@@ -440,35 +443,46 @@ window.onload = function (){
   difficultyMultiplier = 1;
   var playing = true;
   var playerAlive;
+  var changeLevel;
 
-
-  var playLoop = function () {
-    if (life <= 0){
-      console.log("OW U DED");
-      playerAlive = false;
-    } else {
-      update();
-      render();
-      requestAnimationFrame(playLoop);
-    }
-  };
-
+  resetOrbits();
   buildKillers(1);
-  buildHunterKillers(2);
-  buildBlockers(3);
+  buildHunterKillers(1);
+  buildBlockers(1);
   rotateOrbitItems();
 
   var masterLoop = function () {
     playerAlive = true;
 
-    while (playerAlive === true){
-      playLoop();
+    if (changeLevel === true){
+      resetOrbits();
+      console.log("change level is true");
+      difficultyMultiplier ++;
+      buildKillers(difficultyMultiplier);
+      buildHunterKillers(parseInt(Math.log(difficultyMultiplier) - 1));
+      buildBlockers(parseInt(Math.log(difficultyMultiplier)));
+      rotateOrbitItems();
+      changeLevel = false;
     }
-    console.log("Zed is dead");
+
+    if (playerAlive === true){
+      if (life <= 0){
+        console.log("OW U DED");
+        playerAlive = false;
+        changeLevel = true;
+      } else {
+        update();
+        render();
+      }
+    }
+
+    if (playerObject.orbit === 0){
+      changeLevel = true;
+    }
     requestAnimationFrame(masterLoop);
   };
 
-  playLoop();
+  masterLoop();
 
 };
 
