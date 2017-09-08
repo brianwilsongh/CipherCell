@@ -147,7 +147,7 @@ window.onload = function (){
     var collisionDetected = false;
     var collisionMarginOrbitRatio = (innerCircleWidth + 50) / innerCircleWidth;
     var collisionMargin = (Math.PI/96) + Math.pow(collisionMarginOrbitRatio, (4 - orbit))
-     * (Math.PI/288); //prevents player icon from appearing inside blocker
+     * (Math.PI/394); //prevents player icon from appearing inside blocker
     itemsOfOrbit[orbit].forEach((blocker) => {
       var playerHorizRad = ((Math.PI*2) - ((Math.PI*2 + ((playerObject.radian + intendedRadianChange) % (Math.PI * 2)))%(Math.PI*2)));
       var blockerHorizRad = ((Math.PI*2) - blocker.startArc);
@@ -198,11 +198,15 @@ window.onload = function (){
   var playerHit = function () {
     life -= 0.3;
     window.playerDamaged = true;
+    document.getElementById("matrix").classList.remove("matrixRegular");
+    document.getElementById("matrix").classList.add("matrixDamaged");
   };
 
   var update = function() {
     time --;
     window.playerDamaged = false;
+    document.getElementById("matrix").classList.remove("matrixDamaged");
+    document.getElementById("matrix").classList.add("matrixRegular");
     Object.keys(itemsOfOrbit).forEach((orbit) => {
       itemsOfOrbit[orbit].forEach((item) => {
         if (item.startArc >= 2 * Math.PI){
@@ -224,7 +228,7 @@ window.onload = function (){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
     ctx.fill();
     ctx.closePath();
 
@@ -269,8 +273,13 @@ window.onload = function (){
     ctx.translate((center[0] + center[0]/3), center[1]/10);
     ctx.font = "24px courier";
     ctx.fillStyle="#FFFFFF";
-    ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
     ctx.fillText(`Time: ${time}ms`, -center[0], 0);
+    if (window.playerDamaged){
+      ctx.fillStyle="#e51300";
+      ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
+    } else {
+      ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
+    }
     ctx.restore();
 
 
