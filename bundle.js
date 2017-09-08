@@ -297,17 +297,24 @@ window.onload = function (){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
     ctx.fill();
     ctx.closePath();
 
-    ctx.lineWidth = 1;
-    if (window.playerDamaged){
-      ctx.strokeStyle = "#e51300";
-    } else {
-      ctx.strokeStyle = "black";
-    }
     ctx.save();
+    ctx.lineWidth = 1;
+    console.log(playerObject.orbit);
+    if (window.playerDamaged){
+      ctx.strokeStyle = "#e51300"; //evil red
+    } else {
+      if (playerObject.orbit < 1){
+        ctx.strokeStyle = "#05ad1b"; //matrix green
+      } else {
+        ctx.setLineDash([10, 15]);
+        ctx.strokeStyle = "black";
+      }
+    }
+
     ctx.shadowColor = "white";
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
@@ -329,10 +336,12 @@ window.onload = function (){
     var angle = Math.atan2(playerPosY + 15 - center[1], playerPosX + 15 - center[0]) - Math.PI / 2;
 
     ctx.save();
-    ctx.shadowColor = "orange";
+    if (Math.random() < 0.5){
+      ctx.shadowColor = "white";
+    }
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 7;
 
     ctx.translate(playerPosX + 15, playerPosY + 15);
     ctx.rotate(Math.PI/6 + angle);
@@ -360,6 +369,7 @@ window.onload = function (){
       itemsOfOrbit[orbitKey].forEach((item) => {
         ctx.beginPath();
         if (item.type === "killer"){
+          ctx.setLineDash([5, 16]);
           ctx.strokeStyle = "#e51300";
           ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
         } else {
@@ -443,7 +453,6 @@ var enterMatrix = function (){
     //drawing the characters
     function draw()
     {
-        console.log("matrix drawing!");
         //Black BG for the canvas
         //translucent BG to show trail
         ctx.fillStyle = "rgba(0, 0, 0, 0.04)";

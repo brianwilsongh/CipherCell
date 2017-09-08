@@ -47,7 +47,6 @@ var enterMatrix = function (){
     //drawing the characters
     function draw()
     {
-        console.log("matrix drawing!");
         //Black BG for the canvas
         //translucent BG to show trail
         ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
