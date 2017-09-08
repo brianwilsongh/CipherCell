@@ -84,6 +84,7 @@ window.onload = function (){
   var innerCircleWidth = canvas.width / 20;
   var orbits = [0, 50, 100, 150, 200, 250];
   var life;
+  var time;
 
 
   addEventListener("keydown", function (e) {
@@ -178,9 +179,6 @@ window.onload = function (){
       }
     }
   };
-
-  buildKillers(10);
-
   var buildBlockers = function (number){
     var blockers = 0;
     var startArcsInOrbit = { 1: [], 2: [], 3: [], 4: []};
@@ -198,11 +196,27 @@ window.onload = function (){
       }
     }
   };
-  buildBlockers(10);
+  var rotateOrbitItems = function () {
+    Object.keys(itemsOfOrbit).forEach((orbit) => {
+      itemsOfOrbit[orbit].forEach((item) => {
+        if (Math.random() > 0.5){
+          item.startArc += (Math.random() * Math.PI/7);
+        } else {
+          item.startArc -= (Math.random() * Math.PI/7);
+        }
+      });
+    });
+  };
+
+  buildKillers(20);
+  buildBlockers(20);
+  rotateOrbitItems();
 
   var checkCollisionAgainstBlocker = function (orbit, intendedRadianChange=0){
     var collisionDetected = false;
-    var collisionMargin = (Math.PI/96); //prevents player icon from appearing inside blocker
+    var collisionMarginOrbitRatio = (innerCircleWidth + 50) / innerCircleWidth;
+    var collisionMargin = (Math.PI/96) + Math.pow(collisionMarginOrbitRatio, (4 - orbit))
+     * (Math.PI/288); //prevents player icon from appearing inside blocker
     itemsOfOrbit[orbit].forEach((blocker) => {
       var playerHorizRad = ((Math.PI*2) - ((Math.PI*2 + ((playerObject.radian + intendedRadianChange) % (Math.PI * 2)))%(Math.PI*2)));
       var blockerHorizRad = ((Math.PI*2) - blocker.startArc);
@@ -211,7 +225,7 @@ window.onload = function (){
         if (blockerHorizRad <= Math.PI/6){
           //if blocker is at the overlap
           if (playerHorizRad <= (blockerHorizRad + collisionMargin)
-            || playerHorizRad >= Math.PI*2 - (Math.PI/6 - blockerHorizRad - collisionMargin) ){
+            || playerHorizRad >= Math.PI*2 - (Math.PI/6 - blockerHorizRad + collisionMargin) ){
               collisionDetected = true;
             }
         } else if (playerHorizRad <= (blockerHorizRad + collisionMargin)
@@ -251,11 +265,12 @@ window.onload = function (){
   };
 
   var playerHit = function () {
-    life --;
+    life -= 0.3;
     window.playerDamaged = true;
   };
 
   var update = function() {
+    time --;
     window.playerDamaged = false;
     Object.keys(itemsOfOrbit).forEach((orbit) => {
       itemsOfOrbit[orbit].forEach((item) => {
@@ -278,7 +293,7 @@ window.onload = function (){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     ctx.fill();
     ctx.closePath();
 
@@ -304,29 +319,41 @@ window.onload = function (){
     var angle = Math.atan2(playerPosY + 15 - center[1], playerPosX + 15 - center[0]) - Math.PI / 2;
 
     ctx.save();
+    ctx.shadowColor = "orange";
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowBlur = 6;
+
     ctx.translate(playerPosX + 15, playerPosY + 15);
     ctx.rotate(Math.PI/6 + angle);
-    ctx.drawImage(playerImage, -15, -15, 30 , 30);
+    ctx.drawImage(playerImage, -15, -15, 34 , 34);
     ctx.restore();
-
     ctx.save();
     ctx.translate((center[0] + center[0]/3), center[1]/10);
     ctx.font = "24px courier";
     ctx.fillStyle="#FFFFFF";
-    ctx.fillText(`Detection: ${parseInt((life / 100) * 100)}%`, 0, 0);
+    ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
+    ctx.fillText(`Time: ${time}ms`, -center[0], 0);
     ctx.restore();
 
 
-    ctx.lineWidth = 17;
+    ctx.save();
+    ctx.lineWidth = 14;
     ctx.lineCap = "square";
     //draw the objects in each orbit
     Object.keys(itemsOfOrbit).forEach((orbitKey) => {
       itemsOfOrbit[orbitKey].forEach((item) => {
         ctx.beginPath();
         if (item.type === "killer"){
+          ctx.shadowColor = "red";
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
+          ctx.shadowBlur = 1;
           ctx.strokeStyle = "#e51300";
           ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
         } else {
+          ctx.shadowColor = "green";
+
           ctx.strokeStyle = "#05ad1b";
           ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
         }
@@ -334,12 +361,16 @@ window.onload = function (){
         ctx.closePath();
       });
     });
+    ctx.restore();
 
   };
 
   life = 100;
+  time = 1000;
+  var playing = true;
   var mainLoop = function () {
     var now = Date.now();
+
     update();
     render();
     requestAnimationFrame(mainLoop);
