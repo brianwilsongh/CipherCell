@@ -83,13 +83,17 @@ window.onload = function (){
   var center = [canvas.width/2, canvas.height/2];
   var innerCircleWidth = canvas.width / 20;
   var orbits = [0, 50, 100, 150, 200, 250];
-  var life;
-  var time;
+  var life; //reach 100 detection and you die
+  var time; //time for level
+  var difficultyMultiplier; //var to determine how difficult stage is
 
 
   addEventListener("keydown", function (e) {
     e.stopPropagation();
-    if (e.keyCode === 38 || e.keyCode === 87) {
+    if (e.keyCode === 32){
+      playing = playing ? false : true;
+    }
+    if ((e.keyCode === 38 || e.keyCode === 87) && playing) {
       //up arrow or 'w'
       if (playerObject.orbit > 0){
         if (!checkCollisionAgainstBlocker(playerObject.orbit - 1)){
@@ -98,7 +102,7 @@ window.onload = function (){
         }
       }
     }
-    if (e.keyCode === 40 || e.keyCode === 83) {
+    if ((e.keyCode === 40 || e.keyCode === 83) && playing) {
       //down arrow
       if (playerObject.orbit < 4){
         if (!checkCollisionAgainstBlocker(playerObject.orbit + 1)){
@@ -107,7 +111,7 @@ window.onload = function (){
         }
       }
     }
-    if (e.keyCode === 37 || e.keyCode === 65) {
+    if ((e.keyCode === 37 || e.keyCode === 65) && playing) {
       //left
       var intendedRadianChange = (.15 - (playerObject.orbit * .02));
 
@@ -120,7 +124,7 @@ window.onload = function (){
         }
       }
     }
-    if (e.keyCode === 39 || e.keyCode === 68) {
+    if ((e.keyCode === 39 || e.keyCode === 68) && playing) {
       //right
       var intendedRadianChange = -(.15 - (playerObject.orbit * .02));
       if (playerObject.orbit === orbits.length - 1){
@@ -172,8 +176,25 @@ window.onload = function (){
           if (startArcsInOrbit[orbit].indexOf(randomStartArc) === -1){
             //if this start arc was not used in this orbit...
             startArcsInOrbit[orbit].push(randomStartArc);
-            itemsOfOrbit[orbit].push({type: "killer", startArc: randomStartArc});
+            itemsOfOrbit[orbit].push({type: "killer", breed: "normal", startArc: randomStartArc});
             killers += 1;
+          }
+        }
+      }
+    }
+  };
+  var buildHunterKillers = function (number){
+    var hunterKillers = 0;
+    var startArcsInOrbit = { 1: [], 2: [], 3: [], 4: []};
+    while (hunterKillers < number){
+      for (var orbit = 1; orbit < 5; orbit++){
+        if (hunterKillers < number){
+          var randomStartArc = parseInt(Math.random() * 6) + 1;
+          if (startArcsInOrbit[orbit].indexOf(randomStartArc) === -1){
+            //if this start arc was not used in this orbit...
+            startArcsInOrbit[orbit].push(randomStartArc);
+            itemsOfOrbit[orbit].push({type: "killer", breed: "hunterKiller", startArc: randomStartArc});
+            hunterKillers += 1;
           }
         }
       }
@@ -207,10 +228,6 @@ window.onload = function (){
       });
     });
   };
-
-  buildKillers(20);
-  buildBlockers(20);
-  rotateOrbitItems();
 
   var checkCollisionAgainstBlocker = function (orbit, intendedRadianChange=0){
     var collisionDetected = false;
@@ -247,46 +264,75 @@ window.onload = function (){
           return false;
         }
 
-        if (killerHorizRad <= Math.PI/6){
-          //if killer is at the overlap
-          if (playerHorizRad <= killerHorizRad
-            || playerHorizRad >= Math.PI*2 - (Math.PI/6 - killerHorizRad) ){
-              playerHit();
-              return true;
-          }
-        } else if (playerHorizRad <= killerHorizRad
-          && playerHorizRad >= killerHorizRad - Math.PI/6){
-            playerHit();
-            return true;
+        if (killer.breed === "normal"){
+          if (killerHorizRad <= Math.PI/6){
+            //if killer is at the overlap
+            if (playerHorizRad <= killerHorizRad
+              || playerHorizRad >= Math.PI*2 - (Math.PI/6 - killerHorizRad) ){
+                playerHit(killer);
+                return true;
+              }
+            } else if (playerHorizRad <= killerHorizRad
+              && playerHorizRad >= killerHorizRad - Math.PI/6){
+                playerHit(killer);
+                return true;
+            }
+        } else {
+          killerHorizRad %= Math.PI*2;
+          console.log("killer, player rads", killerHorizRad, playerHorizRad);
+          if (killerHorizRad <= Math.PI/6){
+            //if hunterKiller is at the overlap (hks rendered CCW)
+            if (playerHorizRad <= killerHorizRad
+              || playerHorizRad >= Math.PI*2 - Math.PI - killerHorizRad ){
+                playerHit(killer);
+                return true;
+              }
+            } else if (playerHorizRad <= killerHorizRad
+              && playerHorizRad >= killerHorizRad - Math.PI/6){
+                playerHit(killer);
+                return true;
+            }
         }
       });
     }
     return false;
   };
 
-  var playerHit = function () {
-    life -= 0.3;
+  var playerHit = function (killer) {
+    if (killer.breed === "normal"){
+      life -= 0.2;
+    } else {
+      life -= 0.7;
+    }
     window.playerDamaged = true;
     document.getElementById("matrix").classList.remove("matrixRegular");
     document.getElementById("matrix").classList.add("matrixDamaged");
   };
 
   var update = function() {
-    time --;
-    window.playerDamaged = false;
-    document.getElementById("matrix").classList.remove("matrixDamaged");
-    document.getElementById("matrix").classList.add("matrixRegular");
-    Object.keys(itemsOfOrbit).forEach((orbit) => {
-      itemsOfOrbit[orbit].forEach((item) => {
-        if (item.startArc >= 2 * Math.PI){
-          item.startArc = 0;
-        }
-        if (item.type === "killer"){
-          item.startArc += 0.01;
-        }
+    if (playing){
+      time --;
+      window.playerDamaged = false;
+      document.getElementById("matrix").classList.remove("matrixDamaged");
+      document.getElementById("matrix").classList.add("matrixRegular");
+      Object.keys(itemsOfOrbit).forEach((orbit) => {
+        itemsOfOrbit[orbit].forEach((item) => {
+          if (item.startArc >= 2 * Math.PI){
+            item.startArc = 0;
+          } else if (item.startArc <= -2 * Math.PI){
+            item.startArc = 0;
+          }
+          if (item.type === "killer"){
+            if (item.breed === "normal"){
+              item.startArc += 0.01;
+            } else {
+              item.startArc -= 0.02;
+            }
+          }
+        });
       });
-    });
-    checkPlayerInsideKiller();
+      checkPlayerInsideKiller();
+    }
   };
 
   var positionWithinKillerArc = function(pos, killerStartArc){
@@ -303,7 +349,6 @@ window.onload = function (){
 
     ctx.save();
     ctx.lineWidth = 1;
-    console.log(playerObject.orbit);
     if (window.playerDamaged){
       ctx.strokeStyle = "#e51300"; //evil red
     } else {
@@ -336,7 +381,7 @@ window.onload = function (){
     var angle = Math.atan2(playerPosY + 15 - center[1], playerPosX + 15 - center[0]) - Math.PI / 2;
 
     ctx.save();
-    if (Math.random() < 0.5){
+    if (Math.random() < 0.3){
       ctx.shadowColor = "white";
     }
     ctx.shadowOffsetX = 0;
@@ -370,8 +415,13 @@ window.onload = function (){
         ctx.beginPath();
         if (item.type === "killer"){
           ctx.setLineDash([5, 16]);
-          ctx.strokeStyle = "#e51300";
-          ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
+          if (item.breed === "normal"){
+            ctx.strokeStyle = "#e51300";
+            ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
+          } else {
+            ctx.strokeStyle = "orange";
+            ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
+          }
         } else {
           ctx.strokeStyle = "#05ad1b";
           ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
@@ -386,16 +436,23 @@ window.onload = function (){
 
   life = 100;
   time = 1000;
+  difficultyMultiplier = 1;
   var playing = true;
-  var mainLoop = function () {
+
+  buildKillers(5);
+  buildHunterKillers(2);
+  buildBlockers(3);
+  rotateOrbitItems();
+
+  var playLoop = function () {
     var now = Date.now();
 
     update();
     render();
-    requestAnimationFrame(mainLoop);
+    requestAnimationFrame(playLoop);
   };
 
-  mainLoop();
+  playLoop();
 
 };
 
