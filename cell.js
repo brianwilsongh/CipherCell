@@ -224,7 +224,7 @@ window.onload = function (){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     ctx.fill();
     ctx.closePath();
 
@@ -232,8 +232,13 @@ window.onload = function (){
     if (window.playerDamaged){
       ctx.strokeStyle = "#e51300";
     } else {
-      ctx.strokeStyle = "#05ad1b";
+      ctx.strokeStyle = "black";
     }
+    ctx.save();
+    ctx.shadowColor = "white";
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowBlur = 4;
     ctx.beginPath();
     //orbit paths
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[0], 0, 2 * Math.PI);
@@ -243,6 +248,7 @@ window.onload = function (){
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
     ctx.stroke();
     ctx.closePath();
+    ctx.restore();
 
     var playerPosX = center[0] + playerObject.x(playerObject.radian, playerObject.orbit) - 15;
     var playerPosY = center[1] + playerObject.y(playerObject.radian, playerObject.orbit) - 15;
@@ -276,15 +282,9 @@ window.onload = function (){
       itemsOfOrbit[orbitKey].forEach((item) => {
         ctx.beginPath();
         if (item.type === "killer"){
-          ctx.shadowColor = "red";
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 0;
-          ctx.shadowBlur = 1;
           ctx.strokeStyle = "#e51300";
           ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
         } else {
-          ctx.shadowColor = "green";
-
           ctx.strokeStyle = "#05ad1b";
           ctx.arc(center[0], center[1], innerCircleWidth + orbits[orbitKey], item.startArc, item.startArc + Math.PI/6);
         }
