@@ -210,7 +210,6 @@ window.onload = function (){
             }
         } else {
           killerHorizRad %= Math.PI*2;
-          console.log("killer, player rads", killerHorizRad, playerHorizRad);
           if (killerHorizRad <= Math.PI/6){
             //if hunterKiller is at the overlap (hks rendered CCW)
             if (playerHorizRad <= killerHorizRad
@@ -330,9 +329,9 @@ window.onload = function (){
     ctx.fillText(`Time: ${time}ms`, -center[0], 0);
     if (window.playerDamaged){
       ctx.fillStyle="#e51300";
-      ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
+      ctx.fillText(`Detected: ${parseInt((100 - life))}%`, 0, 0);
     } else {
-      ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
+      ctx.fillText(`Detected: ${parseInt((100 - life))}%`, 0, 0);
     }
     ctx.restore();
 
@@ -369,18 +368,33 @@ window.onload = function (){
   time = 1000;
   difficultyMultiplier = 1;
   var playing = true;
+  var playerAlive;
+
+
+  var playLoop = function () {
+    if (life <= 0){
+      console.log("OW U DED");
+      playerAlive = false;
+    } else {
+      update();
+      render();
+      requestAnimationFrame(playLoop);
+    }
+  };
 
   buildKillers(5);
   buildHunterKillers(2);
   buildBlockers(3);
   rotateOrbitItems();
 
-  var playLoop = function () {
-    var now = Date.now();
+  var masterLoop = function () {
+    playerAlive = true;
 
-    update();
-    render();
-    requestAnimationFrame(playLoop);
+    while (playerAlive){
+      playLoop();
+    }
+    console.log("Zed is dead");
+    requestAnimationFrame(masterLoop);
   };
 
   playLoop();

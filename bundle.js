@@ -279,7 +279,6 @@ window.onload = function (){
             }
         } else {
           killerHorizRad %= Math.PI*2;
-          console.log("killer, player rads", killerHorizRad, playerHorizRad);
           if (killerHorizRad <= Math.PI/6){
             //if hunterKiller is at the overlap (hks rendered CCW)
             if (playerHorizRad <= killerHorizRad
@@ -381,7 +380,7 @@ window.onload = function (){
     var angle = Math.atan2(playerPosY + 15 - center[1], playerPosX + 15 - center[0]) - Math.PI / 2;
 
     ctx.save();
-    if (Math.random() < 0.3){
+    if (Math.random() < 0.2){
       ctx.shadowColor = "white";
     }
     ctx.shadowOffsetX = 0;
@@ -438,18 +437,33 @@ window.onload = function (){
   time = 1000;
   difficultyMultiplier = 1;
   var playing = true;
+  var playerAlive;
+
+
+  var playLoop = function () {
+    if (life <= 0){
+      console.log("OW U DED");
+      playerAlive = false;
+    } else {  
+      update();
+      render();
+      requestAnimationFrame(playLoop);
+    }
+  };
 
   buildKillers(5);
   buildHunterKillers(2);
   buildBlockers(3);
   rotateOrbitItems();
 
-  var playLoop = function () {
-    var now = Date.now();
+  var masterLoop = function () {
+    playerAlive = true;
 
-    update();
-    render();
-    requestAnimationFrame(playLoop);
+    while (playerAlive){
+      playLoop();
+    }
+    console.log("Zed is dead");
+    requestAnimationFrame(masterLoop);
   };
 
   playLoop();
