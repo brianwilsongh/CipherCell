@@ -1,33 +1,30 @@
 # Background
 
-CipherCell is a game based on Bypass, a minigame from the Mass Effect franchise. Like the original, CipherCell will feature multiple 'levels' of rotating, concentric rings where the goal is for the player to move an arrow to the center.
+CipherCell is a hacker-themed HTML5 game loosely based on Bypass, a mini-game from the Mass Effect franchise. Like the original, CipherCell will feature multiple levels of rotating, concentric rings where the goal is for the player to move to the center of the cell without being detected.
 
-![Image of Bypass from the original](https://vignette.wikia.nocookie.net/masseffect/images/3/3f/Decrypting.png)
+![Image of CipherCell](http://i.imgur.com/aKcTEb6.png)
 
-# MVP
+# Rules
 
-Players will be able to:
-- move the arrow with WASD commands on the keyboard, being able to jump into another ring towards the center with W and away from the center with S
-- pause the game
-- have multiple chances to "beat" the game by having multiple "lives" which are lost when a player collides with one of the
+Players must reach the innermost ring of the cell. Once this happens, they will spawn again at the 6 o'clock position, and the difficulty of the stage will be incremented. The goal is to reach the center of the cell as many times as possible in the shortest possible time, leading to the highest possible point tally in the end.
 
-# Wireframe
+Players lose when detection reaches 100%. Any of the following conditions can increase the detection percentage:
 
-(soon...)
+- player comes into contact with a red "killer" line, gaining detection points the longer they are inside of it
+- player comes into contact with a golden "hunter killer", gaining detection at three times the normal rate
+- player runs out of time on the counter, resulting in a continuous gain in detection
+
+# Controls
+
+- Move the arrow with either WASD or arrow keys
+- Players can only move within the five 'orbits' of the ring, using A/D or left/right arrows to rotate around
+- Players start outside of the cell with the ability to rotate and chooser where to enter it
+- Players can move closer to the center with the "up" command (W or up arrow)
+- Players can move away from the center with the "down" command (S or down arrow)
+- The game can be paused with the spacebar
 
 # Implementation
 
-I believe that I will just be using native javascript for this game, and the vast majority of the work will be on canvas. I will have to animate the objects that rotate in a circle (hence figuring out circular animation) and I will have to have a way of detecting object collision. The player's movement will also be challenging, as they will have to be able to jump from one ring to the next.
+The game is implemented with HTML5 canvas and vanilla JavaScript, which is bundled together with Webpack.
 
-Techs:
-
-HTML5 canvas
-Javascript
-
-Will need 2 canvases stack atop one another, one for bg and one to hold rotating circles & the player
-
-# Implementation Timeline
-
-D1 - Setup canvas, determine appropriate size, determine method for circular animation
-D2 - Determine movement of player, determine how to detect object collision
-D3 - Build out details of the game, including multiple stages and fix errors that may arise, include the timer
+The game utilizes quite a bit of trigonometry to calculate everything from the rotation of the player's arrow to the calculations involved in collision detection.
