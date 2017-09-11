@@ -1,6 +1,6 @@
 # Background
 
-CipherCell is a hacker-themed HTML5 game loosely based on Bypass, a mini-game from the Mass Effect franchise. Like the original, CipherCell will feature multiple levels of rotating, concentric rings where the goal is for the player to move to the center of the cell without being detected.
+CipherCell is a hacker-themed HTML5 game based loosely on Bypass - a mini-game from the Mass Effect franchise. Like the original, CipherCell will feature a stage of concentric rings dotted with walls. The goal is for the player to move to the center in a limited amount of time without colliding into any objects.
 
 ![Image of CipherCell](http://i.imgur.com/aKcTEb6.png)
 
@@ -10,9 +10,10 @@ Players must reach the innermost ring of the cell. Once this happens, they will 
 
 Players lose when detection reaches 100%. Any of the following conditions can increase the detection percentage:
 
-- player comes into contact with a red "killer" line, gaining detection points the longer they are inside of it
-- player comes into contact with a golden "hunter killer", gaining detection at three times the normal rate
 - player runs out of time on the counter, resulting in a continuous gain in detection
+- player comes into contact with a red-colored "killer", gaining detection points the longer they are inside of it
+- player comes into contact with a golden-colored "hunter killer", gaining detection at three times the normal rate
+![Image of HK contact](http://i.imgur.com/YXnfCDQ.png)
 
 # Controls
 
