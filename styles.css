@@ -45,3 +45,31 @@ p {
 .matrix{
   background: black;
 }
+
+.overlayHidden {
+  display: none;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width:100%;
+  height:100%;
+}
+.overlay {
+     position: fixed;
+     background: rgba(0, 0, 0, 0.5);
+     left: 0px;
+     top: 0px;
+     width:100%;
+     height:100%;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     z-index: 11;
+     color: white;
+}
+
+#overlay div {
+     width:360px;
+     margin: 5% auto;
+}
