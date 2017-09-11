@@ -470,7 +470,7 @@ window.onload = function (){
       time = 1000 + parseInt(Math.log(difficultyMultiplier) * 100);
       buildKillers(parseInt(Math.log(difficultyMultiplier + 1) * 3.5));
       buildHunterKillers(parseInt(Math.log(difficultyMultiplier + 0.25)));
-      buildBlockers(parseInt(Math.log(difficultyMultiplier + 1) * 2));
+      buildBlockers(parseInt(Math.log(difficultyMultiplier + 100) * 1.5));
       rotateOrbitItems();
       changeLevel = false;
     }
