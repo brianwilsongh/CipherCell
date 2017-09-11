@@ -333,9 +333,9 @@ window.onload = function (){
           }
           if (item.type === "killer"){
             if (item.breed === "normal"){
-              item.startArc += 0.01 * (1 + Math.log(difficultyMultiplier) / 12);
+              item.startArc += 0.01 * (1 + Math.log(difficultyMultiplier) / 14);
             } else {
-              item.startArc -= 0.02 * (1 + Math.log(difficultyMultiplier) / 12);
+              item.startArc -= 0.02 * (1 + Math.log(difficultyMultiplier) / 14);
             }
           }
         });
@@ -450,26 +450,27 @@ window.onload = function (){
   life = 100;
   time = 2000;
   playerScore = 0;
-  difficultyMultiplier = 1;
+  difficultyMultiplier = 0;
   var playing = true;
   var playerAlive;
-  var changeLevel;
+  var changeLevel = true;
 
-  resetOrbits();
-  console.log('building killer');
-  buildKillers(1);
-  rotateOrbitItems();
+
 
   var masterLoop = function () {
     playerAlive = true;
+    console.log("masterlooping");
 
     if (changeLevel === true && playerAlive === true){
       resetOrbits();
       difficultyMultiplier ++;
+      if (time >= 0){
+        playerScore += time / 2;
+      }
       time = 1000 + parseInt(Math.log(difficultyMultiplier) * 100);
-      buildKillers(parseInt(Math.log(difficultyMultiplier + 1) * 4));
-      buildHunterKillers(parseInt(Math.log(difficultyMultiplier + 0.75)));
-      buildBlockers(parseInt(Math.log(difficultyMultiplier + 1) * 3));
+      buildKillers(parseInt(Math.log(difficultyMultiplier + 1) * 3.5));
+      buildHunterKillers(parseInt(Math.log(difficultyMultiplier + 0.25)));
+      buildBlockers(parseInt(Math.log(difficultyMultiplier + 1) * 2));
       rotateOrbitItems();
       changeLevel = false;
     }
@@ -488,15 +489,27 @@ window.onload = function (){
       changeLevel = true;
     }
 
-    if (playerAlive){
-      requestAnimationFrame(masterLoop);
-    }
+    requestAnimationFrame(masterLoop);
   };
 
   var deadLoop = function () {
     var deathBox = document.getElementById("deathBox");
     deathBox.classList.remove("overlayHidden");
     deathBox.classList.add("overlay");
+    var deathBoxRestartButton = document.getElementById("deathBoxRestartButton");
+    deathBoxRestartButton.addEventListener("click", () => {
+      life = 100;
+      time = 2000;
+      playerScore = 0;
+      difficultyMultiplier = 0;
+      playing = true;
+      playerAlive = true;
+      changeLevel = true;
+      deathBox.classList.remove("overlay");
+      deathBox.classList.add("overlayHidden");
+    });
+    var deathBoxScore = document.getElementById("deathBoxScore");
+    deathBoxScore.innerText = parseInt(playerScore);
 
   };
 
