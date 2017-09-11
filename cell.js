@@ -279,12 +279,40 @@ window.onload = function (){
 
   };
 
+  var winAnimation = function(){
+    var imageHolder = document.getElementById("switch");
+    imageHolder.src="circleSwitch.gif";
+    imageHolder.style.display = "block";
+    window.playerWinning = true;
+    setTimeout(() => {
+      imageHolder.src = "";
+      imageHolder.style.display = "none";
+      window.playerWinning = false;
+    }, 1200);
+  };
+
+  var conditionalDamageAnimation = function(){
+    var imageHolder = document.getElementById("switch");
+    console.log("imageHolder.src is:", imageHolder.src);
+    if (imageHolder.src.includes("index")){
+      if (window.playerDamaged){
+        imageHolder.src = "dmgGif.gif";
+        imageHolder.style.display = "block";
+      }
+    } else if (imageHolder.src.includes("dmgGif") && !window.playerDamaged){
+      imageHolder.src = "";
+    }
+  };
+
   var render = function() {
+    conditionalDamageAnimation();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
     if (window.playerDamaged){
       ctx.fillStyle = "rgba(40, 0, 0, 0.68)";
+    } else if (window.playerWinning){
+      ctx.fillStyle = "rgba(0, 15, 0, 0.58)";
     } else {
       ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
     }
@@ -296,6 +324,7 @@ window.onload = function (){
 
     if (playerObject.orbit < 1){
       ctx.strokeStyle = "#05ad1b"; //matrix green
+      winAnimation();
     } else {
       ctx.setLineDash([10, 15]);
       ctx.strokeStyle = "black";
@@ -390,7 +419,6 @@ window.onload = function (){
 
   var masterLoop = function () {
     playerAlive = true;
-    console.log("masterlooping");
 
     if (changeLevel === true && playerAlive === true){
       resetOrbits();
