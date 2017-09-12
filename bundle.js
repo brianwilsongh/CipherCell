@@ -466,9 +466,9 @@ var fadeOutTimer;
     ctx.fillText(`Time: ${time}ms`, -center[0], 0);
     if (window.playerDamaged){
       ctx.fillStyle="#e51300";
-      ctx.fillText(`Detected: ${parseInt((100 - life))}%`, 0, 0);
+      ctx.fillText(`detection: ${parseInt((100 - life))}%`, 0, 0);
     } else {
-      ctx.fillText(`Detected: ${parseInt((100 - life))}%`, 0, 0);
+      ctx.fillText(`Detection: ${parseInt((100 - life))}%`, 0, 0);
     }
     ctx.restore();
 
@@ -576,7 +576,6 @@ var backToMenuButton = document.getElementById("backToMenu");
         instructionsBox.classList.add("overlayHidden");
         mainMenu.style.display = "flex";
         instructionShower.style.display = "none";
-        console.log('tried return');
       });
     }
     requestAnimationFrame(masterLoop);
