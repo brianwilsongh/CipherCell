@@ -58,7 +58,7 @@
   margin-right: auto;
   height: 465px;
   width: 465px;
-  opacity: 0.10;
+  opacity: 0.0;
   z-index: 0;
   overflow: hidden;
 }
@@ -102,15 +102,77 @@ p {
      color: white;
 }
 
+.overlayBlack {
+     position: fixed;
+     background: rgba(0, 0, 0, 1);
+     left: 0px;
+     top: 0px;
+     width:100%;
+     height:100%;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     z-index: 11;
+     color: white;
+}
+
+.menuOverlay {
+     position: fixed;
+     background: rgba(0, 0, 0, 0.1);
+     left: 0px;
+     top: 0px;
+     width:100%;
+     height:100%;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     z-index: 11;
+     color: white;
+}
+
 #deathBoxShower {
      display: flex;
      flex-direction: column;
      align-items: center;
 }
 
+#menuBoxShower {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     height: 38%;
+     z-index: 12;
+}
+
+#backToMenu {
+  position: absolute;
+  left: 1em;
+  top: 3em;
+}
+
+#instructionShower {
+    background-image: url("instructions.png");
+    background-repeat: no-repeat;
+    width: 811px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+    margin-top: 1em;
+}
+
 button {
+  min-width: 9em;
+  font-size: 75%;
   color: white;
   background: black;
-  margin: 3%;
-  padding: 7%;
+  margin: 2em;
+  padding: 1em;
+  outline: none;
+  border: 1px solid #05ad1b;
+  z-index: 13;
 }

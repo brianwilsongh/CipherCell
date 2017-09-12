@@ -521,7 +521,12 @@ var fadeOutTimer;
 
 var gameStarted = false;
 var mainMenu = document.getElementById("menuBox");
+var instructionsBox = document.getElementById("instructionsBox");
+var instructionShower = document.getElementById("instructionShower");
+var instructionsButton = document.getElementById("menuBoxInstructions");
+
 var mainMenuStartButton = document.getElementById("menuBoxStartButton");
+var backToMenuButton = document.getElementById("backToMenu");
   var masterLoop = function () {
     playerAlive = true;
 
@@ -559,6 +564,19 @@ var mainMenuStartButton = document.getElementById("menuBoxStartButton");
     } else {
       mainMenuStartButton.addEventListener("click", () => {
         gameStarted = true;
+      });
+      instructionsButton.addEventListener("click", () => {
+        instructionsBox.classList.remove("overlayHidden");
+        instructionsBox.classList.add("overlayBlack");
+        mainMenu.style.display = "none";
+        instructionShower.style.display = "flex";
+      });
+      backToMenuButton.addEventListener("click", () => {
+        instructionsBox.classList.remove("overlayBlack");
+        instructionsBox.classList.add("overlayHidden");
+        mainMenu.style.display = "flex";
+        instructionShower.style.display = "none";
+        console.log('tried return');
       });
     }
     requestAnimationFrame(masterLoop);
