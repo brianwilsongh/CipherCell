@@ -359,47 +359,10 @@ window.onload = function (){
       imageHolder.src = "";
       imageHolder.style.display = "none";
       window.playerWinning = false;
-    }, 1200);
+    }, 1100);
   };
-
-var triggerFadeIn = false;
-var fadeInTimer;
-var fadeOutTimer;
-  var conditionalDamageAnimation = function(){
-    var imageHolder = document.getElementById("switch");
-    console.log("imageHolder.src is:", imageHolder.src);
-    if (imageHolder.src.includes("index")){
-      if (window.playerDamaged){
-        imageHolder.src = "dmgGif.gif";
-        imageHolder.style.display = "block";
-
-        if (!triggerFadeIn){
-          triggerFadeIn = true;
-          unfade(imageHolder);
-        }
-      }
-    } else if (imageHolder.src.includes("dmgGif") && !window.playerDamaged){
-      imageHolder.src = "";
-      imageHolder.style.display = "none";
-    }
-  };
-
-  function unfade(element) {
-    var opacity = 0.1;
-    element.style.display = 'block';
-    fadeInTimer = setInterval(function () {
-        if (opacity >= 0.7){
-            clearInterval(fadeInTimer);
-            triggerFadeIn = false;
-        }
-        element.style.opacity = opacity;
-        element.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
-        opacity += opacity * 0.03;
-    }, 10);
-}
 
   var render = function() {
-    conditionalDamageAnimation();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(center[0], center[1], innerCircleWidth + orbits[4], 0, 2 * Math.PI);
