@@ -510,38 +510,57 @@ var fadeOutTimer;
   var changeLevel = true;
 
 
+  var menuLoop = function () {
+    var gameStarted = false;
 
+
+    if (gameStarted){
+      masterLoop();
+    }
+  };
+
+var gameStarted = false;
+var mainMenu = document.getElementById("menuBox");
+var mainMenuStartButton = document.getElementById("menuBoxStartButton");
   var masterLoop = function () {
     playerAlive = true;
 
-    if (changeLevel === true && playerAlive === true){
-      resetOrbits();
-      difficultyMultiplier ++;
-      if (time >= 0){
-        playerScore += time / 2;
+    if (gameStarted){
+      mainMenu.style.display = "none";
+      if (changeLevel === true && playerAlive === true){
+        resetOrbits();
+        difficultyMultiplier ++;
+        if (time >= 0){
+          playerScore += time / 2;
+        }
+        time = 1000 + parseInt(Math.log(difficultyMultiplier) * 100);
+        buildKillers(parseInt(Math.log(difficultyMultiplier + 1) * 3.5));
+        buildHunterKillers(parseInt(Math.log(difficultyMultiplier + 0.25)));
+        buildBlockers(parseInt(Math.log(difficultyMultiplier + 100) * 1.5));
+        rotateOrbitItems();
+        changeLevel = false;
       }
-      time = 1000 + parseInt(Math.log(difficultyMultiplier) * 100);
-      buildKillers(parseInt(Math.log(difficultyMultiplier + 1) * 3.5));
-      buildHunterKillers(parseInt(Math.log(difficultyMultiplier + 0.25)));
-      buildBlockers(parseInt(Math.log(difficultyMultiplier + 100) * 1.5));
-      rotateOrbitItems();
-      changeLevel = false;
-    }
 
-    if (playerAlive === true){
-      if (life <= 0){
-        playerAlive = false;
-        deadLoop();
-      } else {
-        update();
-        render();
+      if (playerAlive === true){
+        if (life <= 0){
+          playerAlive = false;
+          deadLoop();
+        } else {
+          update();
+          render();
+        }
       }
-    }
 
-    if (playerObject.orbit === 0){
-      changeLevel = true;
-    }
+      if (playerObject.orbit === 0){
+        changeLevel = true;
+      }
 
+
+    } else {
+      mainMenuStartButton.addEventListener("click", () => {
+        gameStarted = true;
+      });
+    }
     requestAnimationFrame(masterLoop);
   };
 

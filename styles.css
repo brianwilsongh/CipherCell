@@ -25,7 +25,7 @@
 }
 
 .matrixRegular {
-  background: rgba(46, 46, 46, 0.85);
+  background: rgba(48, 48, 48, 0.80);
 }
 
 .matrixDamaged {
@@ -108,7 +108,7 @@ p {
      align-items: center;
 }
 
-#deathBoxRestartButton {
+button {
   color: white;
   background: black;
   margin: 3%;
