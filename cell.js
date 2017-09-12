@@ -244,6 +244,8 @@ window.onload = function (){
   };
 
   var update = function() {
+    var bubble = document.getElementById("bubble");
+    bubble.style.opacity = (life) / 225;
     if (playing){
       window.playerDamaged = false; //undo player damaged
       document.getElementById("matrix").classList.remove("matrixDamaged");
@@ -309,20 +311,21 @@ var fadeOutTimer;
       }
     } else if (imageHolder.src.includes("dmgGif") && !window.playerDamaged){
       imageHolder.src = "";
+      imageHolder.style.display = "none";
     }
   };
 
   function unfade(element) {
-    var opacity = 0.05;
+    var opacity = 0.1;
     element.style.display = 'block';
     fadeInTimer = setInterval(function () {
-        if (opacity >= 0.6){
+        if (opacity >= 0.7){
             clearInterval(fadeInTimer);
             triggerFadeIn = false;
         }
         element.style.opacity = opacity;
         element.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
-        opacity += opacity * 0.02;
+        opacity += opacity * 0.03;
     }, 10);
 }
 
