@@ -291,6 +291,9 @@ window.onload = function (){
     }, 1200);
   };
 
+var triggerFadeIn = false;
+var fadeInTimer;
+var fadeOutTimer;
   var conditionalDamageAnimation = function(){
     var imageHolder = document.getElementById("switch");
     console.log("imageHolder.src is:", imageHolder.src);
@@ -298,11 +301,30 @@ window.onload = function (){
       if (window.playerDamaged){
         imageHolder.src = "dmgGif.gif";
         imageHolder.style.display = "block";
+
+        if (!triggerFadeIn){
+          triggerFadeIn = true;
+          unfade(imageHolder);
+        }
       }
     } else if (imageHolder.src.includes("dmgGif") && !window.playerDamaged){
       imageHolder.src = "";
     }
   };
+
+  function unfade(element) {
+    var opacity = 0.05;
+    element.style.display = 'block';
+    fadeInTimer = setInterval(function () {
+        if (opacity >= 0.6){
+            clearInterval(fadeInTimer);
+            triggerFadeIn = false;
+        }
+        element.style.opacity = opacity;
+        element.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
+        opacity += opacity * 0.02;
+    }, 10);
+}
 
   var render = function() {
     conditionalDamageAnimation();
