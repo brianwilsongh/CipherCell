@@ -44,7 +44,7 @@
   height: 465px;
   width: 465px;
   opacity: 0.9;
-  z-index: 0;
+  z-index: 1;
   overflow: hidden;
 }
 
